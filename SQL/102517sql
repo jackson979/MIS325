@@ -1,0 +1,55 @@
+--using inner join to get data from 2 tables
+SELECT invoice_number, vendor_name
+FROM vendors INNER JOIN invoices    
+    ON vendors.vendor_id = invoices.vendor_id
+ORDER BY invoice_number;
+
+--using table aliases for all tables in joins (v and i)
+SELECT invoice_number, vendor_name, invoice_due_date,
+    (invoice_total - payment_total - credit_total)
+        AS balance_due
+FROM vendors v JOIN invoices i
+    ON v.vendor_id = i.vendor_id
+WHERE (invoice_total - payment_total - credit_total) > 0
+ORDER BY invoice_due_date DESC;
+
+--using table aliases for one table in a join (line_items)
+SELECT invoice_number, line_item_amt, line_item_description
+FROM invoices JOIN invoice_line_items line_items
+    ON invoices.invoice_id = line_items.invoice_id
+WHERE account_number = 540
+ORDER BY invoice_date;
+
+--using AND/OR operator to have multiple join conditions
+SELECT invoice_number, invoice_date, invoice_total, line_item_amt
+FROM invoices i JOIN invoice_line_items li
+    ON (i.invoice_id = li.invoice_id) AND
+        (i.invoice_total > li.line_item_amt)
+ORDER BY invoice_number;
+
+--using WHERE clause to narrow join results
+SELECT invoice_number, invoice_date, invoice_total, line_item_amt
+FROM invoices i JOIN invoice_line_items li    
+    ON i.invoice_id = li.invoice_id
+WHERE i.invoice_total > li.line_item_amt
+ORDER BY invoice_number;
+
+--joining multiple tables
+SELECT vendor_name, invoice_number, invoice_date, line_item_amt, account_description
+FROM vendors v    
+    JOIN invoices i ON v.vendor_id = i.vendor_id
+    JOIN invoice_line_items li ON i.invoice_id = li.invoice_id
+    JOIN general_ledger_accounts gl ON li.account_number = gl.account_number
+WHERE (invoice_total - payment_total - credit_total) > 0
+ORDER BY vendor_name, line_item_amt DESC;
+
+---EXERCISE 1
+SELECT * FROM invoices i JOIN vendors v
+    ON v.vendor_id = i.vendor_id
+ORDER BY invoice_id;
+
+--EXERCISE 2
+SELECT vendor_name, invoice_number, invoice_date, (invoice_total - payment_total - credit_total) AS balance_due
+FROM vendors v JOIN invoices i ON v.vendor_id = i.vendor_id
+WHERE (invoice_total - payment_total - credit_total) <> 0
+ORDER BY vendor_name;

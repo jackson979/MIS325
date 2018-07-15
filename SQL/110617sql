@@ -1,0 +1,113 @@
+--basic agg. functions
+SELECT COUNT(*) AS number_of_invoices, 
+    SUM(invoice_total - payment_total - credit_total) AS total_due
+FROM invoices
+WHERE invoice_total - payment_total - credit_total > 0;
+
+SELECT 'After 1/1/2008' AS selection_date, COUNT(*) AS number_of_invoices,
+    ROUND(AVG(invoice_total), 2) AS avg_invoice_amt, SUM(invoice_total) AS total_invoice_amt
+FROM invoices
+WHERE invoice_date >'01-JAN-2014';
+
+SELECT 'After 1/1/2008' AS selection_date, COUNT(*) AS number_of_invoices,
+    MAX(invoice_total) AS highest_invoice_total, MIN(invoice_total) AS lowest_invoice_total
+FROM invoices
+WHERE invoice_date > '01-JAN-2014';
+
+SELECT MIN(vendor_name) AS first_vendor, MAX(vendor_name) AS last_vendor,
+    COUNT(vendor_name) AS number_of_vendors
+FROM vendors;
+
+--using DISTINT keyword
+SELECT COUNT(DISTINCT vendor_id) AS number_of_vendors, COUNT(vendor_id) AS number_of_invoices,    ROUND(AVG(invoice_total),2) AS avg_invoice_amt,
+    SUM(invoice_total) AS total_invoice_amt
+FROM invoices
+WHERE invoice_date > '01-JAN-2008';
+
+--using GROUP BY clause
+SELECT vendor_id, COUNT(*) AS invoice_qty
+FROM invoices
+GROUP BY vendor_id
+ORDER BY vendor_id;
+
+--using HAVING clause
+SELECT vendor_id, ROUND(AVG(invoice_total), 2) AS average_invoice_amount
+FROM invoices
+GROUP BY vendor_id
+HAVING AVG(invoice_total) > 2000
+ORDER BY average_invoice_amount DESC;
+
+--exercise 1
+SELECT vendor_id, SUM(invoice_total) as invoice_total_sum
+FROM invoices
+GROUP BY vendor_id
+ORDER BY vendor_id;
+
+--using joins with queries
+SELECT vendor_state, vendor_city, COUNT(*) AS invoice_qty,
+    ROUND(AVG(invoice_total),2) AS invoice_avg
+FROM invoices JOIN vendors
+    ON invoices.vendor_id = vendors.vendor_id
+GROUP BY vendor_state, vendor_city
+ORDER BY vendor_state, vendor_city;
+
+--limiting groups using HAVING
+SELECT vendor_state, vendor_city, COUNT(*) AS invoice_qty,    
+    ROUND(AVG(invoice_total),2) AS invoice_avg
+FROM invoices JOIN vendors    
+ON invoices.vendor_id = vendors.vendor_id
+GROUP BY vendor_state, vendor_city
+HAVING COUNT(*) >= 2
+ORDER BY vendor_state, vendor_city;
+
+--exercise 2
+SELECT vendor_name, SUM(payment_total) AS payment_total_sum
+FROM invoices i JOIN vendors v
+    ON i.vendor_id = v.vendor_id
+GROUP BY vendor_name
+ORDER BY 2 DESC;
+
+--HAVING clause vs. WHERE clause
+SELECT vendor_name, COUNT(*) AS invoice_qty, 
+    ROUND(AVG(invoice_total),2) AS invoice_avg
+FROM vendors JOIN invoices    
+    ON vendors.vendor_id = invoices.vendor_id
+GROUP BY vendor_name
+HAVING AVG(invoice_total) > 500
+ORDER BY invoice_qty DESC;
+
+SELECT vendor_name, COUNT(*) AS invoice_qty,
+    ROUND(AVG(invoice_total),2) AS invoice_avg
+FROM vendors JOIN invoices
+    ON vendors.vendor_id = invoices.vendor_id
+WHERE invoice_total > 500
+GROUP BY vendor_name
+ORDER BY invoice_qty DESC;
+
+--compound HAVING clause
+SELECT invoice_date, COUNT(*) AS invoice_qty,
+    SUM(invoice_total) AS invoice_sum
+FROM invoices
+GROUP BY invoice_date
+HAVING invoice_date BETWEEN '01-MAY-2014' AND '31-MAY-2014'
+    AND COUNT(*) > 1
+    AND SUM(invoice_total) > 100
+ORDER BY invoice_date DESC;
+
+--non-agg. search conditions can be in HAVING or WHERE (same as above)
+SELECT invoice_date, COUNT(*) AS invoice_qty,
+    SUM(invoice_total) AS invoice_sum
+FROM invoices
+WHERE invoice_date BETWEEN '01-MAY-2014' AND '31-MAY-2014'
+GROUP BY invoice_date
+HAVING COUNT(*) > 1
+    AND SUM(invoice_total) > 100
+ORDER BY invoice_date DESC;
+
+--exercise 3
+SELECT vendor_name, COUNT(invoice_number) AS invoice_count,
+    SUM(invoice_total) AS invoice_total_sum
+FROM vendors v JOIN invoices i
+    ON v.vendor_id = i.vendor_id
+GROUP BY vendor_name
+ORDER BY 2 DESC;

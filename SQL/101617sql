@@ -1,0 +1,55 @@
+--DISTINCT
+SELECT DISTINCT vendor_city, vendor_state
+FROM vendors
+ORDER BY vendor_city;
+
+--ROWNUM
+SELECT vendor_id, invoice_total
+FROM invoices
+WHERE ROWNUM <= 5;
+
+--Selecting top 5 totals using subquery
+SELECT vendor_id, invoice_total
+FROM (SELECT * FROM invoices
+        ORDER BY invoice_total DESC)
+WHERE ROWNUM <= 5;
+
+--class activity
+SELECT invoice_number AS "Number",
+        invoice_total AS "Total",
+        (payment_total + credit_total) AS "Credits",
+        (invoice_total - (payment_total + credit_total)) AS "Balance Due"
+FROM (SELECT * FROM invoices 
+        ORDER BY (invoice_total - (payment_total + credit_total)) DESC)
+WHERE ROWNUM <= 10;
+
+--comparison operators
+SELECT invoice_number, invoice_date, invoice_total
+FROM invoices
+WHERE invoice_date > '01-MAY-2014' OR invoice_total > 500
+        AND invoice_total - payment_total - credit_total > 0
+ORDER BY invoice_number;
+
+--parenthesis can change AND/OR conditions
+SELECT invoice_number, invoice_date, invoice_total
+FROM invoices
+WHERE (invoice_date > '01-MAY-2014' OR invoice_total > 500)
+        AND invoice_total - payment_total - credit_total > 0
+ORDER BY invoice_number;
+
+--using IN operator with subquery
+SELECT * FROM invoices
+WHERE vendor_id IN
+    (SELECT vendor_id
+    FROM invoices
+    WHERE invoice_date = '01-MAY-2014');
+    
+--using NOT IN operator
+SELECT * FROM vendors
+WHERE vendor_state NOT IN ('CA', 'NV', 'OR');
+
+--using BETWEEN operator
+SELECT invoice_id, invoice_date, invoice_total
+FROM invoices
+WHERE invoice_date BETWEEN '01-MAY-2014' AND '31-MAY-2014'
+ORDER BY invoice_date ASC;

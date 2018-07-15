@@ -1,0 +1,36 @@
+SELECT vendor_contact_first_name,
+vendor_contact_last_name,
+    SUBSTR(vendor_contact_first_name, 1, 1) ||
+    SUBSTR(vendor_contact_last_name, 1, 1) AS initials
+FROM vendors;
+
+SELECT payment_date FROM invoices;
+
+SELECT TO_CHAR(payment_date) 
+FROM invoices;
+
+SELECT TO_CHAR(payment_date, 'MM/DD/YYYY') 
+FROM invoices;
+
+SELECT invoice_date,
+    SYSDATE AS today,
+    ROUND(SYSDATE - invoice_date)  AS invoice_age_in_days
+FROM invoices;
+
+SELECT 'test'  AS test_string,
+    10-7    AS test_calculation,
+    SYSDATE AS test_date
+FROM Dual;
+
+SELECT invoice_due_date AS "Due Date",
+    '$' || ROUND(invoice_total,2) AS "Invoice Total",
+    '$' || ROUND(invoice_total * .1,2) AS "10%",
+    '$' || ROUND(invoice_total + (invoice_total * .1),2) AS "Plus 10%"
+FROM invoices
+WHERE invoice_total >= 500 AND invoice_total <= 1000
+ORDER BY invoice_due_date DESC;
+
+SELECT ROUND(1-.4) AS "1-.4",
+        ROUND(1-.5) AS "1-.5",
+        ROUND(1-.6) AS "1-.6"
+FROM Dual;

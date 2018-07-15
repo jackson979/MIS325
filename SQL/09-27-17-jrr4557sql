@@ -1,0 +1,67 @@
+--creating, dropping, and adding values to tables
+CREATE TABLE vendors_test
+(
+    vendor_id       NUMBER      CONSTRAINT vendors_test_pk  PRIMARY KEY,
+    vendor_name     VARCHAR(50) UNIQUE
+);
+
+INSERT INTO vendors_test
+VALUES(2,'Fedex');
+INSERT INTO vendors_test
+VALUES(1,'UPS');
+
+RENAME vendors_test TO vendor_test;
+
+TRUNCATE TABLE vendor_test;
+
+DROP TABLE vendor_test;
+
+
+DROP TABLE vendors_test1;
+DROP TABLE vendors_test2;
+DROP TABLE vendors_test3;
+
+
+
+
+CREATE TABLE vendors2
+(
+vendor_id NUMBER NOT NULL,
+vendor_name VARCHAR2(50) NOT NULL,
+vendor_address1 VARCHAR2(50),
+vendor_address2 VARCHAR2(50),
+vendor_city VARCHAR2(50) NOT NULL,
+vendor_state CHAR(2) NOT NULL,
+vendor_zip_code VARCHAR2(20) NOT NULL,
+vendor_phone VARCHAR2(50),
+vendor_contact_last_name VARCHAR2(50),
+vendor_contact_first_name VARCHAR2(50),
+CONSTRAINT vendors2_pk
+PRIMARY KEY (vendor_id),
+CONSTRAINT vendors2_vendor_name_uq
+UNIQUE (vendor_name)
+);
+
+CREATE SEQUENCE vendor2_id_seq
+START WITH 124;
+
+--will not work b/c NEXTVAL has to be used for first initiation of sequence
+INSERT INTO vendors2
+VALUES (vendor2_id_seq.CURRVAL, 'UPS',
+ '123 Main St.', NULL,
+ 'Fresno', 'CA', '93711', '(800) 221-5528',
+ 'LeBron', 'James');
+ 
+ --proper form of above
+INSERT INTO vendors2
+VALUES (vendor2_id_seq.NEXTVAL, 'UPS',
+ '123 Main St.', NULL,
+ 'Fresno', 'CA', '93711', '(800) 221-5528',
+ 'LeBron', 'James');
+ 
+ --CURRVAL+1 is same as NEXTVAL
+INSERT INTO vendors2
+VALUES (vendor2_id_seq.CURRVAL + 1, 'FedEx',
+ '456 Main St.', NULL,
+ 'Fresno', 'CA', '93711', '(800) 221-6628',
+ 'Kobe', 'Bryant');

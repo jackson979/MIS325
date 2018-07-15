@@ -1,0 +1,70 @@
+--subquery in WHERE clause
+SELECT vendor_id, vendor_name, vendor_state
+FROM vendors
+WHERE vendor_id NOT IN
+    (SELECT DISTINCT vendor_id
+    FROM invoices)
+ORDER BY vendor_id;
+
+--same result as above
+SELECT v.vendor_id, vendor_name, vendor_state
+FROM vendors v LEFT JOIN invoices i
+        ON v.vendor_id = i.vendor_id
+WHERE i.vendor_id IS NULL
+ORDER BY v.vendor_id;
+
+--ALL keyword
+SELECT vendor_name, invoice_number, invoice_total
+FROM invoices i JOIN vendors v ON i.vendor_id = v.vendor_id
+WHERE invoice_total > ALL
+    (SELECT invoice_total
+    FROM invoices
+    WHERE vendor_id = 34)
+ORDER BY vendor_name;
+
+--ANY/SOME keyword
+SELECT vendor_name, invoice_number, invoice_total
+FROM vendors JOIN invoices ON vendors.vendor_id = invoices.invoice_id
+WHERE invoice_total < ANY
+    (SELECT invoice_total 
+    FROM invoices
+    WHERE vendor_id = 115);
+
+--subquery in FROM clause
+SELECT vendor_id, invoice_total
+FROM (SELECT * FROM invoices 
+        ORDER BY invoice_total DESC)
+WHERE ROWNUM <= 5;
+
+--subquery in SELECT clause
+SELECT vendor_name,
+        (SELECT MAX(invoice_date) FROM invoices WHERE invoices.vendor_id = vendors.vendor_id) AS latest_inv
+FROM vendors
+ORDER BY latest_inv;
+
+--same as above
+SELECT vendor_name, MAX(invoice_date) AS latest_inv
+FROM vendors v LEFT JOIN invoices i ON v.vendor_id = i.vendor_id
+GROUP BY vendor_name
+ORDER BY latest_inv;
+
+--Exercise 1
+SELECT DISTINCT vendor_name
+FROM vendors
+WHERE vendor_id IN
+    (SELECT vendor_id FROM invoices)
+ORDER BY vendor_name;
+
+--Exercise 1 Test Output
+SELECT DISTINCT vendor_name
+FROM vendors v JOIN invoices i
+    ON v.vendor_id = i.vendor_id
+ORDER BY vendor_name;
+
+--Exercise 2
+SELECT invoice_id, payment_total
+FROM invoices
+WHERE payment_total > (SELECT AVG(payment_total) as avg_total FROM invoices)
+ORDER BY invoice_id;
+
+--Exercise 3

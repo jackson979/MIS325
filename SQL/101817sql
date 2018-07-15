@@ -1,0 +1,41 @@
+SELECT * FROM vendors
+WHERE vendor_city LIKE 'San%';
+
+SELECT SUBSTR(vendor_contact_first_name,1,1) || SUBSTR(vendor_contact_last_name,1,1) AS "initials"
+FROM vendors
+WHERE SUBSTR(vendor_contact_first_name,1,1) || SUBSTR(vendor_contact_last_name,1,1) LIKE 'F_';
+
+SELECT vendor_contact_last_name || ', ' || vendor_contact_first_name AS full_name
+FROM vendors
+WHERE vendor_contact_last_name < 'D' OR vendor_contact_last_name LIKE 'E%'
+ORDER BY vendor_contact_last_name, vendor_contact_first_name;
+
+SELECT * FROM null_sample
+WHERE invoice_total IS NULL;
+
+SELECT vendor_name,
+        vendor_city || ', ' || vendor_state || ' ' ||
+        vendor_zip_code AS address
+FROM vendors
+ORDER BY address, vendor_name;
+
+SELECT vendor_name,
+        vendor_city || ', ' || vendor_state || ' ' ||
+        vendor_zip_code AS address
+FROM vendors
+ORDER BY 2, 1;
+
+SELECT vendor_id, invoice_total
+FROM invoices
+ORDER BY invoice_total DESC
+FETCH FIRST 5 ROWS ONLY;
+
+SELECT vendor_id, invoice_total
+FROM invoices 
+ORDER BY invoice_total DESC
+FETCH FIRST 30 PERCENT ROWS ONLY;
+
+SELECT invoice_id, vendor_id, invoice_total
+FROM invoices
+ORDER BY invoice_id
+OFFSET 2 ROWS FETCH NEXT 3 ROWS ONLY;

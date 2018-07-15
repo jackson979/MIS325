@@ -1,0 +1,123 @@
+/*SET SERVEROUTPUT ON;
+
+DECLARE
+    terms_id_var NUMBER;
+BEGIN  
+    SELECT terms_id INTO terms_id_var 
+    FROM invoices WHERE invoice_id = 4;
+    
+    CASE terms_id_var
+        WHEN 1 THEN
+            DBMS_OUTPUT.PUT_LINE('Net due 10 days');
+        WHEN 2 THEN 
+            DBMS_OUTPUT.PUT_LINE('Net due 20 days');
+        WHEN 3 THEN 
+            DBMS_OUTPUT.PUT_LINE('Net due 30 days');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Net due more than 30 days');
+    END CASE;
+END;
+
+
+SET SERVEROUTPUT ON;
+DECLARE
+    terms_id_var NUMBER;
+BEGIN  
+    SELECT terms_id INTO terms_id_var 
+    FROM invoices WHERE invoice_id = 4;
+    
+    CASE 
+        WHEN terms_id_var = 1 THEN 
+            DBMS_OUTPUT.PUT_LINE('Net due10 days');
+        WHEN terms_id_var = 2 THEN 
+            DBMS_OUTPUT.PUT_LINE('Net due 20 days');
+        WHEN terms_id_var = 3 THEN 
+            DBMS_OUTPUT.PUT_LINE('Net due 30 days');      
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Net due more than 30 days');
+    END CASE;
+END;
+
+
+FOR i IN 1..3 LOOP
+    DBMS_OUTPUT.PUT_LINE('i: ' || i);
+END LOOP;
+
+
+i := 1;
+WHILE i < 4 LOOP
+    DBMS_OUTPUT.PUT_LINE('i: ' || i);
+    i := i + 1;
+END LOOP;
+
+
+i := 1;
+LOOP  
+    DBMS_OUTPUT.PUT_LINE('i: ' || i);
+    i := i + 1;
+    EXIT WHEN i >= 4;
+END LOOP;
+
+
+SET SERVEROUTPUT ON;
+BEGIN  
+    INSERT INTO general_ledger_accounts VALUES (130, 'Cash');
+    
+    DBMS_OUTPUT.PUT_LINE('1 row inserted.');
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        DBMS_OUTPUT.PUT_LINE('You attempted to insert a duplicate value.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An unexpected exception occurred.');
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+
+
+SET SERVEROUTPUT ON;
+BEGIN  
+    INSERT INTO invoices  
+    VALUES (115, 34, 'ZXA-080', '30-AUG-06',
+            14092.59, 0, 0, 3, '30-SEP-06', NULL);
+    
+    INSERT INTO invoice_line_items  
+    VALUES (115, 1, 160, 4447.23, 'HW upgrade');
+    
+    INSERT INTO invoice_line_items   
+    VALUES (115, 2, 167, 9645.36, 'OS upgrade');
+    
+    COMMIT;  
+    DBMS_OUTPUT.PUT_LINE('The transaction was committed.');
+EXCEPTION  
+    WHEN OTHERS THEN
+        ROLLBACK;    
+        DBMS_OUTPUT.PUT_LINE('The transaction was rolled back.');
+END;
+
+
+DELETE FROM invoices WHERE invoice_id = 115;
+DELETE FROM invoice_line_items WHERE invoice_id = 115;
+
+SET SERVEROUTPUT ON;
+SAVEPOINT before_invoice;
+
+INSERT INTO invoices
+VALUES (115, 34, 'ZXA-080', '30-AUG-08', 
+        14092.59, 0, 0, 3, '30-SEP-08', NULL);
+        
+SAVEPOINT before_line_item1;
+
+INSERT INTO invoice_line_items 
+VALUES (115, 1, 160, 4447.23, 'HW upgrade');
+
+SAVEPOINT before_line_item2;
+
+INSERT INTO invoice_line_items 
+VALUES (115, 2, 167, 9645.36,'OS upgrade');
+
+ROLLBACK TO SAVEPOINT before_line_item2;
+ROLLBACK TO SAVEPOINT before_line_item1;
+ROLLBACK TO SAVEPOINT before_invoice;
+
+COMMIT;*/
+
+
